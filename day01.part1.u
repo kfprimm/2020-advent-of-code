@@ -1,0 +1,68 @@
+[import ./utils]
+
+input := Load_Text("day01.input")
+
+entries_used := 0
+entries := malloc(1024 * 4) as *i32
+
+start := input
+end   := input
+
+buf := [200]u8
+
+while *end != 0 {
+  if *end == 10 { # \n
+    len := end - start
+    strncpy(buf as *u8, start, len)
+    buf[len] = 0
+    start = end + 1
+
+    entries[entries_used] = atoi(buf as *u8)
+    entries_used = entries_used + 1
+  }
+
+  end = end + 1
+}
+
+print("entries = ")
+print(entries_used)
+print("\n")
+
+a := 0
+b := 0
+
+solved := 0
+
+while a < entries_used && !solved {
+  b = 0
+  while b < entries_used && !solved {
+    if entries[a] + entries[b] == 2020 {
+      print(entries[a])
+      print(" + ")
+      print(entries[b])
+      print(" == ")
+      print(entries[a] + entries[b])
+      print("\n")
+
+      solved = 1
+    } else {
+      b = b + 1
+    }
+  }
+  if !solved {
+    a = a + 1
+  }
+}
+
+if solved {
+  print(entries[a])
+  print(" * ")
+  print(entries[b])
+  print(" == ")
+  print(entries[a] * entries[b])
+  print("\n")
+} else {
+  print("could not solve...\n")
+}
+
+free(entries as ptr)
