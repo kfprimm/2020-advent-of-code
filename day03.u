@@ -1,0 +1,53 @@
+[import test]
+[import uc/lexer]
+
+Calculate_Death :: (run: u64, fall: u64) u64 {
+  p := Load_Text("input/3.txt")
+
+  if !p {
+    print("could not load input\n")
+    exit(0)
+  }
+
+  len := 31
+
+  i := 0
+  lines := 0
+  while i < strlen(p) {
+    while p[i++] != '\n' {}
+    lines++;
+  }
+
+  trees := 0
+  x := 0
+  y := 0
+
+  while y < lines {
+    if p[y * (len + 1) + x % len] == '#' {
+      trees++
+    }
+
+    x += run
+    y += fall
+  }
+
+  return trees
+}
+
+day03 :: () {
+  test("Day 03 (Part 1)", -> () {
+    trees := Calculate_Death(3, 1)
+
+    assert_equals(trees, 259 as u64, "trees == 259")
+  })
+
+  test("Day 03 (Part 2)", -> () {
+    a := Calculate_Death(1, 1)
+    b := Calculate_Death(3, 1)
+    c := Calculate_Death(5, 1)
+    d := Calculate_Death(7, 1)
+    e := Calculate_Death(1, 2)
+
+    assert_equals(a * b * c * d * e, 2224913600, "a * b * c * d * e == 2224913600")
+  })
+}

@@ -2,14 +2,11 @@
 # I currently don't have a sophisticated reflection system to allow me to automate
 # this.
 
-[import ./day01.part1]
-day01_part1()
+[import ./day01]
+day01()
 
-[import ./day01.part2]
-day01_part2()
+[import ./day02]
+day02()
 
-[import ./day02.part1]
-day02_part1()
-
-[import ./day02.part2]
-day02_part2()
+[import ./day03]
+day03()
