@@ -1,24 +1,42 @@
-[import io]
+[import test]
 
-Load_Text :: (path: const *u8) *u8 {
-  file := fopen(path, "r")
+##
+# Useless until I figure out how I should pass variables from a higher scope
+# into the lambda.
 
-  if (!file) {
-    return 0
+line_func :: (line: const *u8) ;
+
+Read_Lines :: (input: const *u8, callback: line_func) {
+  start := input
+  end   := input
+
+  buf : [200]u8
+
+  while *end != 0 {
+    if *end == '\n' {
+      len := end - start
+      strncpy(buf as *u8, start, len)
+      buf[len] = 0
+      start = end + 1
+
+      callback(buf)
+    }
+
+    end = end + 1
   }
+}
 
-  SEEK_SET := 0
-  #SEEK_CUR := 1
-  SEEK_END := 2
+##
+# Given the bounds of a buffer, return the int
 
-  fseek(file, 0 as u64, SEEK_END)
-  numbytes := ftell(file)
-  fseek(file, 0 as u64, SEEK_SET)
+Read_Int :: (start: *u8, end: *u8) i32 {
+  # TODO: should probably assert on the size here...
+  buf : [10]u8
 
-  buf := calloc(numbytes + 1 as u64, 1 as u64)
-  fread(buf, 1 as u64, numbytes, file)
+  len := end - start
+  strncpy(buf as *u8, start, len)
+  buf[len] = 0
+  start = end + 1
 
-  fclose(file)
-
-  return buf
+  return atoi(buf as *u8)
 }

@@ -1,79 +1,69 @@
 [import ./utils]
+[import uc/lexer]
 
-input := Load_Text("day01.input")
+day01_part2 :: () {
+  test("Day 01 (Part 2)", -> () {
+    input := Load_Text("day01.input")
 
-entries_used := 0
-entries := malloc(1024 * 4) as *i32
+    entries_used := 0
+    entries := malloc(1024 * 4) as *i32
 
-start := input
-end   := input
+    start := input
+    end   := input
 
-buf := [200]u8
+    while *end != 0 {
+      if *end == 10 { # \n
+        entries[entries_used] = Read_Int(start, end)
+        entries_used = entries_used + 1
 
-while *end != 0 {
-  if *end == 10 { # \n
-    len := end - start
-    strncpy(buf as *u8, start, len)
-    buf[len] = 0
-    start = end + 1
+        start = end + 1
+      }
 
-    entries[entries_used] = atoi(buf as *u8)
-    entries_used = entries_used + 1
-  }
+      end = end + 1
+    }
 
-  end = end + 1
-}
+    a := 0
+    b := 0
+    c := 0
 
-print("entries = ")
-print(entries_used)
-print("\n")
+    solved := 0
 
-a := 0
-b := 0
-c := 0
+    while a < entries_used && !solved {
+      b = 0
+      while b < entries_used && !solved {
+        c = 0
+        while c < entries_used && !solved {
+          if entries[a] + entries[b] + entries[c] == 2020 {
+            # print(entries[a])
+            # print(" + ")
+            # print(entries[b])
+            # print(" + ")
+            # print(entries[c])
+            # print(" == ")
+            # print(entries[a] + entries[b] + entries[c])
+            # print("\n")
 
-solved := 0
-
-while a < entries_used && !solved {
-  b = 0
-  while b < entries_used && !solved {
-    c = 0
-    while c < entries_used && !solved {
-      if entries[a] + entries[b] + entries[c] == 2020 {
-        print(entries[a])
-        print(" + ")
-        print(entries[b])
-        print(" + ")
-        print(entries[c])
-        print(" == ")
-        print(entries[a] + entries[b] + entries[c])
-        print("\n")
-
-        solved = 1
-      } else {
-        c = c + 1
+            solved = 1
+          } else {
+            c = c + 1
+          }
+        }
+        if !solved {
+          b = b + 1
+        }
+      }
+      if !solved {
+        a = a + 1
       }
     }
-    if !solved {
-      b = b + 1
+
+    if solved {
+      assert_equals( entries[a] + entries[b] + entries[c], 2020 as i32, "a + b == 2020" )
+      assert_equals( entries[a] * entries[b] * entries[c], 259521570 as i32, "a * b == 259521570" )
+    } else {
+      print("could not solve...\n")
     }
-  }
-  if !solved {
-    a = a + 1
-  }
-}
 
-if solved {
-  print(entries[a])
-  print(" * ")
-  print(entries[b])
-  print(" * ")
-  print(entries[c])
-  print(" == ")
-  print(entries[a] * entries[b] * entries[c])
-  print("\n")
-} else {
-  print("could not solve...\n")
+    free(entries as ptr)
+  })
 }
-
-free(entries as ptr)
